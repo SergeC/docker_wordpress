@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  varnish:
+    build: varnish
+    ports:
+      - 80:80
+    depends_on:
+      - nginx
+
+  nginx:
+    build: nginx
+    restart: always
+    volumes_from:
+      - wordpress
+
+  wordpress:
+    image: wordpress:php7.1-fpm
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_PASSWORD: example
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - ./demo-db:/var/lib/mysql
